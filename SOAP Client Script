@@ -1,0 +1,16 @@
+from zeep import Client
+
+client = Client('http://127.0.0.1:8000/?wsdl')
+
+# Query inventory for a specific product
+product_id = '12345'
+inventory_response = client.service.get_inventory(product_id)
+print(inventory_response)
+
+# Update inventory for a product
+update_response = client.service.update_inventory(product_id, 80)
+print(update_response)
+
+# Place an order with a supplier
+order_response = client.service.place_order(product_id, 50)
+print(order_response)
