@@ -1,0 +1,30 @@
+from spyne import Application, rpc, ServiceBase, Iterable, Integer, Unicode
+from spyne.protocol.soap import Soap11
+from spyne.server.wsgi import WsgiApplication
+
+class InventoryManagementService(ServiceBase):
+    @rpc(Unicode, _returns=Iterable(Unicode))
+    def get_inventory(ctx, product_id):
+        # Simulate inventory lookup
+        yield f'Inventory for {product_id}: 100 units'
+
+    @rpc(Unicode, Integer, _returns=Unicode)
+    def update_inventory(ctx, product_id, quantity):
+        # Simulate inventory update
+        return f'Updated inventory for {product_id}: {quantity} units'
+
+    @rpc(Unicode, Integer, _returns=Unicode)
+    def place_order(ctx, product_id, quantity):
+        # Simulate placing an order with a supplier
+        return f'Order placed for {product_id}: {quantity} units'
+
+application = Application([InventoryManagementService], 'urn:inventory_management',
+                          in_protocol=Soap11(validator='lxml'),
+                          out_protocol=Soap11())
+
+wsgi_application = WsgiApplication(application)
+
+if __name__ == '__main__':
+    from wsgiref.simple_server import make_server
+    server = make_server('127.0.0.1', 8000, wsgi_application)
+    server.serve_forever()
